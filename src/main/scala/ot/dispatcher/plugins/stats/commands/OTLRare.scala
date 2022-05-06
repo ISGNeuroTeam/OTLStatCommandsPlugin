@@ -9,7 +9,6 @@ import ot.dispatcher.sdk.{PluginCommand, PluginUtils}
 
 class OTLRare(sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(sq, utils, seps = Set("by")) {
   override def transform (_df: DataFrame): DataFrame = {
-    val dfView = _df.collect()
     val limit = args.split(" ").headOption match {
       case Some(lim) => lim.toIntSafe match {
         case Some(v) => if (v == 0) _df.count else v
@@ -28,7 +27,6 @@ class OTLRare(sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(sq, uti
         _df.groupBy(head, tail: _*).agg(count("*").alias("count"))
       case _ => return _df
     }
-    val dfCountView = dfCount.collect
     //Windowed func spec for cases of 'by'-param existing and not existing
     val w = groups match {
       case h :: t => Window.partitionBy(h, t: _*).orderBy(col("count"))
@@ -36,10 +34,8 @@ class OTLRare(sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(sq, uti
     }
     //Limiting of entries: if 'by'-param exists, limiting in each group
     val dfWindowed = dfCount.withColumn("rn", row_number.over(w))
-    val dfWindowedView = dfWindowed.collect()
     val dfLimit = dfWindowed.filter(col("rn") <= limit)
       .drop("rn")
-    val dfLimitView = dfLimit.collect()
     //Defining of total count of entries in dataset or in each group (if 'by-param exists') and joining limited dataset with totals-containing dataset
     val dfJoined = groups match {
       case h :: t =>
@@ -49,12 +45,8 @@ class OTLRare(sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(sq, uti
         val jdf = _df.agg(count("*").alias("total"))
         dfLimit.crossJoin(jdf)
     }
-    val dfJoinedView = dfJoined.collect()
     //Defining percents
-    val result = dfJoined
-      .withColumn("percent", lit(100) * col("count") / col("total"))
+    dfJoined.withColumn("percent", lit(100) * col("count") / col("total"))
       .drop("total")
-    val resultView = result.collect()
-    result
   }
 }
