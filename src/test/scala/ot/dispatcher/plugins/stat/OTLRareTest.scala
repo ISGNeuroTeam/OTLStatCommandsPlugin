@@ -126,7 +126,7 @@ class OTLRareTest extends CommandTest{
     assert(jsonCompare(actual, expected), f"Result : $actual\n---\nExpected : $expected")
   }
 
-  test("Test 6. Command: | rare <wrong_field>") {
+  ignore("Test 6. Command: | rare <wrong_field>") {
     val query = SimpleQuery("""wrong_field""")
     val command = new OTLRare(query, utils)
     val actual = execute(command)

@@ -82,7 +82,6 @@ import ot.dispatcher.sdk.{PluginCommand, PluginUtils}
  */
 class OTLRare(sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(sq, utils, seps = Set("by")) {
   override def transform (_df: DataFrame): DataFrame = {
-    val dfView = _df.collect()
     val limit = args.split(" ").headOption match {
       case Some(lim) => lim.toIntSafe match {
         case Some(v) => if (v == 0) _df.count else v
