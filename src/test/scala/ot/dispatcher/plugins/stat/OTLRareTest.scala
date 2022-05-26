@@ -126,16 +126,6 @@ class OTLRareTest extends CommandTest{
     assert(jsonCompare(actual, expected), f"Result : $actual\n---\nExpected : $expected")
   }
 
-  ignore("Test 6. Command: | rare <wrong_field>") {
-    val query = SimpleQuery("""wrong_field""")
-    val command = new OTLRare(query, utils)
-    val actual = execute(command)
-    val expected = """[
-                     |{"count":20,"percent":100.0}
-                     |]""".stripMargin
-    assert(jsonCompare(actual, expected), f"Result : $actual\n---\nExpected : $expected")
-  }
-
   test("Test 6. Command: | rare 0 <field>") {
     val query = SimpleQuery("""0 random_Field""")
     val command = new OTLRare(query, utils)
@@ -156,6 +146,49 @@ class OTLRareTest extends CommandTest{
                      |{"random_Field":"20","count":2,"percent":10.0},
                      |{"random_Field":"10","count":2,"percent":10.0},
                      |{"random_Field":"50","count":4,"percent":20.0}
+                     |]""".stripMargin
+    assert(jsonCompare(actual, expected), f"Result : $actual\n---\nExpected : $expected")
+  }
+}
+
+/**
+ * Temporary test class for OTLRare command while supporting for serviceOtl processing (pre-operation RawRead command transforming) not existing in dispatcher-sdk CommandTest
+ * TODO: create mechanism in dispatcher-sdk for command tests isolation without troubles in functionality checking
+ */
+class OTLRareNotStandardTest extends CommandTest{
+  /**
+   * testing dataset
+   * wrong_field column is fictive
+   */
+  override val dataset: String = """[
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"0\", \"random_Field\": \"100\", \"WordField\": \"qwe\", \"junkField\": \"q2W\", \"second_Field\": \"aa\"}","_nifi_time":"1568037188486","serialField":"0","random_Field":"100","WordField":"qwe","junkField":"q2W","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488751", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"1\", \"random_Field\": \"-90\", \"WordField\": \"rty\", \"junkField\": \"132_.\", \"second_Field\": \"bb\"}","_nifi_time":"1568037188487","serialField":"1","random_Field":"-90","WordField":"rty","junkField":"132_.","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"2\", \"random_Field\": \"50\", \"WordField\": \"uio\", \"junkField\": \"asd.cx\", \"second_Field\": \"cc\"}","_nifi_time":"1568037188487","serialField":"2","random_Field":"50","WordField":"uio","junkField":"asd.cx","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"3\", \"random_Field\": \"20\", \"WordField\": \"GreenPeace\", \"junkField\": \"XYZ\", \"second_Field\": \"aa\"}","_nifi_time":"1568037188487","serialField":"3","random_Field":"20","WordField":"GreenPeace","junkField":"XYZ","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"4\", \"random_Field\": \"20\", \"WordField\": \"fgh\", \"junkField\": \"123_ASD\", \"second_Field\": \"aa\"}","_nifi_time":"1568037188487","serialField":"4","random_Field":"20","WordField":"fgh","junkField":"123_ASD","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"5\", \"random_Field\": \"50\", \"WordField\": \"jkl\", \"junkField\": \"casd(@#)asd\", \"second_Field\": \"cc\"}","_nifi_time":"1568037188487","serialField":"5","random_Field":"50","WordField":"jkl","junkField":"casd(@#)asd","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"6\", \"random_Field\": \"60\", \"WordField\": \"zxc\", \"junkField\": \"QQQ.2\", \"second_Field\": \"aa\"}","_nifi_time":"1568037188487","serialField":"6","random_Field":"60","WordField":"zxc","junkField":"QQQ.2","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"7\", \"random_Field\": \"50\", \"WordField\": \"RUS\", \"junkField\": \"00_3\", \"second_Field\": \"cc\"}","_nifi_time":"1568037188487","serialField":"7","random_Field":"50","WordField":"RUS","junkField":"00_3","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"8\", \"random_Field\": \"0\", \"WordField\": \"MMM\", \"junkField\": \"112\", \"second_Field\": \"dd\"}","_nifi_time":"1568037188487","serialField":"8","random_Field":"0","WordField":"MMM","junkField":"112","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"10\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"9","random_Field":"10","WordField":"USA","junkField":"word","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"80\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"10","random_Field":"80","WordField":"USA","junkField":"RRR","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"70\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"11","random_Field":"70","WordField":"USA","junkField":"qwerty","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"110\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"12","random_Field":"110","WordField":"USA","junkField":"12334t","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"-40\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"13","random_Field":"-40","WordField":"USA","junkField":"r8u","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"8\", \"random_Field\": \"5\", \"WordField\": \"MMM\", \"junkField\": \"112\", \"second_Field\": \"dd\"}","_nifi_time":"1568037188487","serialField":"14","random_Field":"5","WordField":"MMM","junkField":"112","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"10\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"15","random_Field":"10","WordField":"USA","junkField":"word","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"50\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"16","random_Field":"50","WordField":"USA","junkField":"space","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"30\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"17","random_Field":"30","WordField":"USA","junkField":"two spieces","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"120\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"18","random_Field":"120","WordField":"USA","junkField":"one piece","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null},
+    {"_time":1568026476854,"_meta":"_subsecond::.854 timestamp::none","host":"test.local:9990","sourcetype":"jmx","index":"test_index","source":"test_source","_raw":"{\"serialField\": \"9\", \"random_Field\": \"-50\", \"WordField\": \"USA\", \"junkField\": \"word\", \"second_Field\": \"ee\"}","_nifi_time":"1568037188487","serialField":"19","random_Field":"-50","WordField":"USA","junkField":"Amo","_subsecond":"854","timestamp":"none","_nifi_time_out":"1568037488752", "wrong_field": null}
+    ]"""
+
+  test("Test 7. Command: | rare <wrong_field>") {
+    val query = SimpleQuery("""wrong_field""")
+    val command = new OTLRare(query, utils)
+    val actual = execute(command)
+    val expected = """[
+                     |{"count":20,"percent":100.0}
                      |]""".stripMargin
     assert(jsonCompare(actual, expected), f"Result : $actual\n---\nExpected : $expected")
   }
