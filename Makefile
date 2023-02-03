@@ -59,7 +59,6 @@ build: package
 	cp LICENSE.md build/$(PROJECT_NAME)/
 	cp docs/plugin.conf.example build/$(PROJECT_NAME)/
 	cp docs/loglevel.properties.example build/$(PROJECT_NAME)/
-	cp -r libs/ build/$(PROJECT_NAME)/
 
 clean:
 	# required section
