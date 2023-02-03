@@ -61,9 +61,9 @@ import ot.dispatcher.sdk.core.extensions.StringExt._
  */
 class OTLPercentileApprox (sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(sq, utils) with ReplaceParser {
 
-  val flatFields = returns.flatFields
+  val flatFields: List[String] = returns.flatFields
 
-  val flatNewFields = returns.flatNewFields
+  val flatNewFields: List[String] = returns.flatNewFields
 
   val field: String = if (flatFields.nonEmpty && !Array("value".addSurroundedBackticks, "accuracy".addSurroundedBackticks).contains(flatFields.head))
     flatFields.head.stripBackticks()
@@ -78,9 +78,9 @@ class OTLPercentileApprox (sq: SimpleQuery, utils: PluginUtils) extends PluginCo
     case _ => throw new IllegalArgumentException(s"value should has double type, but it has other type")
   }
 
-  val accuracyDefault = 10000
+  val accuracyDefault: Int = 10000
 
-  val accuracy = getKeyword("accuracy").getOrElse(accuracyDefault).toString.toIntSafe match {
+  val accuracy: Int = getKeyword("accuracy").getOrElse(accuracyDefault).toString.toIntSafe match {
     case Some(value) => value match {
       case f if f > 0 => f
       case _ => throw new IllegalArgumentException(s"accuracy should be greater than 0, but it has value $value")
@@ -91,15 +91,13 @@ class OTLPercentileApprox (sq: SimpleQuery, utils: PluginUtils) extends PluginCo
   val alias: String = createAlias()
 
   def transform(_df: DataFrame): DataFrame = {
-    val fake = "__fake__"
-    val dfWorked = _df.withColumn(fake, lit(fake))
     val exprText = if (accuracy == accuracyDefault) {
       s"percentile_approx($field, $percentage)"
     } else {
       s"percentile_approx($field, $percentage, $accuracy)"
     }
     val column = expr(exprText).as(alias)
-    dfWorked.groupBy(fake).agg(column).drop(fake)
+    _df.agg(column)
   }
 
   private def createAlias(): String = {

@@ -1,7 +1,6 @@
-package ot.dispatcher.plugins.stat
+package ot.dispatcher.plugins.stats.commands
 
 import org.scalatest.Matchers
-import ot.dispatcher.plugins.stats.commands.{OTLPercentileApprox}
 import ot.dispatcher.sdk.core.{CustomException, SimpleQuery}
 import ot.dispatcher.sdk.test.CommandTest
 
@@ -85,26 +84,26 @@ class OTLPercentileApproxTest extends CommandTest with Matchers {
 
   test("Test 5. Error: negative percentage. Command: | percentile_approx random_Field value = -0.77") {
     val query = SimpleQuery("""random_Field value = -0.77""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentileApprox(query, utils)
       execute(command)
-    }
+    } should have message "value should be from 0.0 to 1.0, but it is -0.77"
   }
 
   test("Test 6. Error: percentage > 1. Command: | percentile_approx serialField value = 8.93") {
     val query = SimpleQuery("""serialField value = 8.93""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentileApprox(query, utils)
       execute(command)
-    }
+    } should have message "value should be from 0.0 to 1.0, but it is 8.93"
   }
 
   test("Test 7. Error: text in place of percentage value. Command: | percentile_approx random_Field value = any_approx") {
     val query = SimpleQuery("""random_Field value = any_approx""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentileApprox(query, utils)
       execute(command)
-    }
+    } should have message "value should has double type, but it has other type"
   }
 
   test("Test 8. Percentile_approx with default value and defined accuracy. Command: | percentile_approx random_Field accuracy = 100") {
@@ -142,26 +141,26 @@ class OTLPercentileApproxTest extends CommandTest with Matchers {
 
   test("Test 11. Error: negative accuracy. Command: | percentile_approx serialField value = 0.84 accuracy = -8") {
     val query = SimpleQuery("""serialField value = 0.84 accuracy = -8""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentileApprox(query, utils)
       execute(command)
-    }
+    } should have message "accuracy should be greater than 0, but it has value -8"
   }
 
   test("Test 12. Error: accuracy = 0. Command: | percentile_approx random_Field value = 0.23 accuracy = 0") {
     val query = SimpleQuery("""random_Field value = 0.23 accuracy = 0""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentileApprox(query, utils)
       execute(command)
-    }
+    } should have message "accuracy should be greater than 0, but it has value 0"
   }
 
   test("Test 13. Error: text in place of accuracy. Command: | percentile_approx random_Field accuracy = accuracy") {
     val query = SimpleQuery("""random_Field accuracy = accuracy""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentileApprox(query, utils)
       execute(command)
-    }
+    } should have message "accuracy should has integer type, but it has other type"
   }
 
   test("Test 14. Error: percentile_approx with defined value and defined accuracy, but without field defining. Command: percentile_approx value = 0.85 accuracy = 7000") {

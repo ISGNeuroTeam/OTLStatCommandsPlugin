@@ -84,26 +84,26 @@ class OTLPercentileTest extends CommandTest with Matchers {
 
   test("Test 5. Error: negative percentage. Command: | percentile random_Field value = -0.63") {
     val query = SimpleQuery("""random_Field value = -0.63""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentile(query, utils)
       execute(command)
-    }
+    } should have message "value should be from 0.0 to 1.0, but it is -0.63"
   }
 
   test("Test 6. Error: percentage > 1. Command: | percentile serialField value = 6.15") {
     val query = SimpleQuery("""serialField value = 6.15""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentile(query, utils)
       execute(command)
-    }
+    } should have message "value should be from 0.0 to 1.0, but it is 6.15"
   }
 
   test("Test 7. Error: text in place of percentage value. Command: | percentile random_Field value = any") {
     val query = SimpleQuery("""random_Field value = any""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentile(query, utils)
       execute(command)
-    }
+    } should have message "value should has double type, but it has other type"
   }
 
   test("Test 8. Percentile with default value and defined frequency. Command: | percentile random_Field frequency = 5") {
@@ -141,26 +141,26 @@ class OTLPercentileTest extends CommandTest with Matchers {
 
   test("Test 11. Error: negative frequency. Command: | percentile serialField value = 0.84 frequency = -6") {
     val query = SimpleQuery("""serialField value = 0.84 frequency = -6""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentile(query, utils)
       execute(command)
-    }
+    } should have message "frequency should be greater than 0, but it has value -6"
   }
 
   test("Test 12. Error: frequency = 0. Command: | percentile random_Field value = 0.23 frequency = 0") {
     val query = SimpleQuery("""random_Field value = 0.23 frequency = 0""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentile(query, utils)
       execute(command)
-    }
+    } should have message "frequency should be greater than 0, but it has value 0"
   }
 
   test("Test 13. Error: text in place of frequency. Command: | percentile random_Field frequency = newFr") {
     val query = SimpleQuery("""random_Field frequency = newFr""")
-    an[IllegalArgumentException] should be thrownBy {
+    the[IllegalArgumentException] thrownBy {
       val command = new OTLPercentile(query, utils)
       execute(command)
-    }
+    } should have message "frequency should has integer type, but it has other type"
   }
 
   test("Test 14. Error: percentile with defined value and defined frequency, but without field defining. Command: percentile value = 0.97 frequency = 2") {

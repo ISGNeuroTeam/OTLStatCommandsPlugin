@@ -61,9 +61,9 @@ import ot.dispatcher.sdk.core.extensions.StringExt._
  */
 class OTLPercentile(sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(sq, utils) with ReplaceParser {
 
-  val flatFields = returns.flatFields
+  val flatFields: List[String] = returns.flatFields
 
-  val flatNewFields = returns.flatNewFields
+  val flatNewFields: List[String] = returns.flatNewFields
 
   val field: String = if (flatFields.nonEmpty && !Array("value".addSurroundedBackticks, "frequency".addSurroundedBackticks).contains(flatFields.head) )
     flatFields.head.stripBackticks()
@@ -78,7 +78,7 @@ class OTLPercentile(sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(s
     case _ => throw new IllegalArgumentException(s"value should has double type, but it has other type")
   }
 
-  val frequencyDefault = 1
+  val frequencyDefault: Int = 1
 
   val frequency: Int = getKeyword("frequency").getOrElse(frequencyDefault).toString.toIntSafe match {
     case Some(value) => value match {
@@ -91,15 +91,13 @@ class OTLPercentile(sq: SimpleQuery, utils: PluginUtils) extends PluginCommand(s
   val alias: String = createAlias()
 
   def transform(_df: DataFrame): DataFrame = {
-    val fake = "__fake__"
-    val dfWorked = _df.withColumn(fake, lit(fake))
     val exprText = if (frequency == frequencyDefault) {
       s"percentile($field, $percentage)"
     } else {
       s"percentile($field, $percentage, $frequency)"
     }
     val column = expr(exprText).as(alias)
-    dfWorked.groupBy(fake).agg(column).drop(fake)
+    _df.agg(column)
   }
 
   private def createAlias(): String = {
