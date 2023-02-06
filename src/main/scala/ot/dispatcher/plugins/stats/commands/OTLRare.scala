@@ -27,7 +27,7 @@ import ot.dispatcher.sdk.{PluginCommand, PluginUtils}
  *    2.__'''by'''__ - defines the field by which grouping occurs in the table.
  *
  * =Usage examples=
- * * OTL 1:
+ * OTL 1:
  * {{{| makeresults | eval a = 10,b=200 | append [makeresults | eval a =20,b=300] | append [makeresults | eval a =40,b=400]
  * | append [makeresults | eval a =30,b=400] | append [makeresults | eval a =20,b=700] | append [makeresults | eval a =10,b=300]
  * | append [makeresults | eval a =30,b=200] | append [makeresults | eval a =10,b=500] | rare a}}}

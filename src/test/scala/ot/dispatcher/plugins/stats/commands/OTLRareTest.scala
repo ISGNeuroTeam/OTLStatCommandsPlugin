@@ -1,6 +1,5 @@
-package ot.dispatcher.plugins.stat
+package ot.dispatcher.plugins.stats.commands
 
-import ot.dispatcher.plugins.stats.commands.OTLRare
 import ot.dispatcher.sdk.core.SimpleQuery
 import ot.dispatcher.sdk.test.CommandTest
 
